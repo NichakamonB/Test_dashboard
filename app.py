@@ -151,16 +151,16 @@ if page == t("🔍 วิเคราะห์รายตัว", "Single View"
         render_full_chart(chart, df)
         chart.load()
 
-       with st.expander(t("🔍 วิเคราะห์จุดเข้า-ออก", "Signal Insight"), expanded=True):
-            s_col1, s_col2 = st.columns([1, 2])
-            with s_col1:
+    with st.expander(t("🔍 วิเคราะห์จุดเข้า-ออก", "Signal Insight"), expanded=True):
+         s_col1, s_col2 = st.columns([1, 2])
+        with s_col1:
                 last_sig = df['signal'].iloc[-1]
                 trend = "BULL" if curr > df['ema200'].iloc[-1] else "BEAR"
                 st.markdown(f"**Trend:** {'🟢' if trend=='BULL' else '🔴'} {trend}")
                 if last_sig == 1: st.success(t("✅ ซื้อ (Breakout)", "✅ BUY"))
                 elif last_sig == -1: st.error(t("❌ ขาย (Breakdown)", "❌ SELL"))
                 else: st.info(t("⌛ ถือ/รอ (Sideway)", "⌛ HOLD/WAIT"))
-            with s_col2:
+        with s_col2:
                 st.table(df[df['signal'] != 0][['time', 'close', 'signal']].tail(3))
 
     # --- 7. FOOTER SECTION ---
@@ -187,6 +187,7 @@ else:
                 c = StreamlitChart(height=450) 
                 render_full_chart(c, d)
                 c.load()
+
 
 
 
