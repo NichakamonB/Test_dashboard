@@ -180,22 +180,28 @@ if page == t("🔍 วิเคราะห์รายตัว", "Single View"
             </div>
             """, unsafe_allow_html=True)
 else:
-    st.subheader(t("📊 กระดาน 4 จอ", "4-Screen Grid"))
+    head_col1, head_col2 = st.columns([8, 2])
+    with head_col1:
+        st.subheader(t("📊 กระดาน 4 จอ", "4-Screen Grid"))
+    with head_col2:
+        if st.button(f"🔄 {t('รีเซ็ตทุกจอ', 'Reset All')}", use_container_width=True):
+            st.rerun()
+
     grid_cols = st.columns(2)
     for i in range(4):
         with grid_cols[i % 2]:
+            # เลือกหุ้นสำหรับแต่ละจอ
             sel = st.selectbox(f"จอ {i+1}", ALL_SYMBOLS, index=i, key=f"grid_sel_{i}")
+            
             d = get_pro_data(sel, timeframe)
+            
             if not d.empty:
-                head1, head2 = st.columns([6, 4])
-                with head1:
-                    st.markdown(f"**{sel}** | {d['close'].iloc[-1]:,.2f}")
-                with head2:
-                    if st.button(f"🔄 {t('รีเซ็ต', 'Reset')}", key=f"grid_reset_{i}", use_container_width=True):
-                        st.rerun()
-                c = StreamlitChart(height=450) 
+                st.markdown(f"**{sel}** | <span style='color:#00ff00;'>{d['close'].iloc[-1]:,.2f}</span>", unsafe_allow_html=True)
+
+                c = StreamlitChart(height=400)
                 render_full_chart(c, d)
                 c.load()
+
 
 
 
