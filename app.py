@@ -139,7 +139,9 @@ if page == t("🔍 วิเคราะห์รายตัว", "Single View"
     symbol = st.session_state.selected_stock
     df = get_pro_data(symbol, timeframe)
     if not df.empty:
-        st.subheader(f"📊 {symbol} ({timeframe})")
+       header_col1, header_col2 = st.columns([8, 2])
+        with header_col1:
+            st.subheader(f"📊 {symbol} ({timeframe})")
         with header_col2:
             if st.button(f"🔄 {t('กลับมาล่าสุด', 'Reset View')}", use_container_width=True):
                 st.rerun()
@@ -186,9 +188,12 @@ else:
             sel = st.selectbox(f"จอ {i+1}", ALL_SYMBOLS, index=i, key=f"grid_sel_{i}")
             d = get_pro_data(sel, timeframe)
             if not d.empty:
+                if st.button(f"🔄 {t('กลับมาล่าสุด', 'Reset View')}", use_container_width=True):
+                st.rerun()
                 st.markdown(f"**{sel}** | {d['close'].iloc[-1]:,.2f}")
                 c = StreamlitChart(height=450) 
                 render_full_chart(c, d)
                 c.load()
+
 
 
