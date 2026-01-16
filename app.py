@@ -162,6 +162,9 @@ if page == t("🔍 วิเคราะห์รายตัว", "Single View"
                 else: st.info(t("⌛ ถือ/รอ (Sideway)", "⌛ HOLD/WAIT"))
             with s_col2:
                 st.table(df[df['signal'] != 0][['time', 'close', 'signal']].tail(3))
+
+    st.markdown("---")
+    cf1, cf2, cf3 = st.columns([3, 4, 3])
     with cf2:
     st.markdown(f"""
         <div style="text-align: center; color: gray; font-size: 14px;">
@@ -185,6 +188,7 @@ else:
                 c = StreamlitChart(height=450) 
                 render_full_chart(c, d)
                 c.load()
+
 
 
 
