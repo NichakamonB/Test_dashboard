@@ -41,7 +41,7 @@ def get_pro_data(symbol, timeframe):
     tf_map = {'5min': '5m', '15min': '15m', '1hour': '1h', '1day': '1d'}
     interval = tf_map.get(timeframe, '1d')
     
-   if timeframe == '5min' or timeframe == '15min':
+    if timeframe == '5min' or timeframe == '15min':
         period = '5d'
     elif timeframe == '1hour':
         period = '1mo'
@@ -185,6 +185,7 @@ else:
                 c = StreamlitChart(height=450) 
                 render_full_chart(c, d)
                 c.load()
+
 
 
 
