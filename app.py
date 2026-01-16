@@ -139,7 +139,7 @@ if page == t("🔍 วิเคราะห์รายตัว", "Single View"
     symbol = st.session_state.selected_stock
     df = get_pro_data(symbol, timeframe)
     if not df.empty:
-       header_col1, header_col2 = st.columns([8, 2])
+        header_col1, header_col2 = st.columns([8, 2])
         with header_col1:
             st.subheader(f"📊 {symbol} ({timeframe})")
         with header_col2:
@@ -194,6 +194,7 @@ else:
                 c = StreamlitChart(height=450) 
                 render_full_chart(c, d)
                 c.load()
+
 
 
 
