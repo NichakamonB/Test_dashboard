@@ -4,7 +4,7 @@ import pandas as pd
 from lightweight_charts.widgets import StreamlitChart
 
 # --- CONFIGURATION ---
-st.set_page_config(layout="wide", page_title="Professional Trading Tool")
+st.set_page_config(layout="wide", page_title="Kwan test")
 
 # --- ระบบภาษา (Multi-language Support) ---
 if 'lang' not in st.session_state:
@@ -134,3 +134,4 @@ elif page in [t("📊 กระดาน 4 จอ", "📊 4-Screen Grid")]:
     col3, col4 = st.columns(2)
     with col3: render_grid_chart(3, 10)
     with col4: render_grid_chart(4, 13)
+
