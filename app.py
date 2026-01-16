@@ -5,25 +5,23 @@ import numpy as np
 from lightweight_charts.widgets import StreamlitChart
 from streamlit_autorefresh import st_autorefresh
 
-# CONFIGURATION
-st.set_page_config(layout="wide", page_title="KWAN TEST", page_icon="📈")
+#  CONFIGURATION 
+st.set_page_config(layout="wide", page_title="kwan test", page_icon="📈")
 
 st.markdown("""
     <style>
-        .block-container { padding-top: 0.5rem; padding-bottom: 0rem; }
-        [data-testid="stSidebarNav"] { padding-top: 0rem; }
-        [data-testid="stSidebar"] .stButton > button {
-            height: 2.0rem; font-size: 14px; margin-bottom: 1px !important;
-            border-radius: 4px; text-align: left; padding-left: 10px;
-        }
-        [data-testid="stSidebar"] .stButton > button:hover { background-color: #ff4b4b; color: white; }
+        /* เพิ่ม Padding ซ้าย-ขวา เป็น 3rem เพื่อให้กราฟมีพื้นที่หายใจ ไม่ติดขอบจอเกินไป */
+        .block-container { padding: 1rem 3rem 1rem 3rem !important; max-width: 100% !important; }
+        iframe { width: 100% !important; border-radius: 8px !important; }
+        [data-testid="stSidebar"] { width: 280px !important; }
         div[data-testid="stMetric"] { background-color: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px; }
     </style>
     """, unsafe_allow_html=True)
 
-st_autorefresh(interval=120000, key="KWAN TEST")
 
-#  SYSTEM STATE 
+st_autorefresh(interval=120000, key="kwan test")
+
+# SYSTEM STATE
 if 'lang' not in st.session_state: st.session_state.lang = 'TH'
 if 'selected_stock' not in st.session_state: st.session_state.selected_stock = "AAPL"
 
@@ -38,11 +36,16 @@ ASSET_GROUPS = {
 ALL_SYMBOLS = [s for sub in ASSET_GROUPS.values() for s in sub]
 
 #  DATA ENGINE 
-@st.cache_data(ttl=110) 
+@st.cache_data(ttl=110)
 def get_pro_data(symbol, timeframe):
     tf_map = {'5min': '5m', '15min': '15m', '1hour': '1h', '1day': '1d'}
     interval = tf_map.get(timeframe, '1d')
-    period = '2y' if timeframe == '1day' else '60d'
+    
+    
+    if timeframe == '1day':
+        period = '6mo'  
+    else:
+        period = '5d'   
     
     try:
         df = yf.download(symbol, interval=interval, period=period, progress=False, auto_adjust=False)
@@ -57,7 +60,7 @@ def get_pro_data(symbol, timeframe):
         df = df.reset_index().rename(columns={'Datetime': 'time', 'Date': 'time'})
         df['time'] = df['time'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S')) 
         
-        # Indicator Calculations
+        # Indicators
         df['ema50'] = df['close'].ewm(span=50, adjust=False).mean()
         df['ema200'] = df['close'].ewm(span=200, adjust=False).mean()
         df['sma20'] = df['close'].rolling(window=20).mean()
@@ -78,24 +81,23 @@ def get_pro_data(symbol, timeframe):
         df.loc[df['close'] < df['sup'].shift(1), 'signal'] = -1
         df['cum_ret'] = (1 + (df['signal'].shift(1) * df['close'].pct_change()).fillna(0)).cumprod() - 1
         
-        return df.dropna()
+        return df.dropna().tail(250) 
     except: return pd.DataFrame()
 
-# SIDEBAR 
+#  SIDEBAR 
 with st.sidebar:
-    st.markdown(f"### ⚡ **KWAN TEST**")
+    st.markdown(f"### ⚡ **kwan test**")
     c1, c2 = st.columns(2)
     if c1.button("🇹🇭 TH", use_container_width=True): st.session_state.lang = 'TH'; st.rerun()
     if c2.button("🇺🇸 EN", use_container_width=True): st.session_state.lang = 'EN'; st.rerun()
     
     st.divider()
     page = st.radio(t("โหมดการทำงาน", "Mode"), [t("🔍 วิเคราะห์รายตัว", "Single View"), t("📊 กระดาน 4 จอ", "4-Screen Grid")])
-    timeframe = st.selectbox(t("ช่วงเวลา", "Timeframe"), ('5min', '15min', '1hour', '1day'))
+    timeframe = st.selectbox(t("ช่วงเวลา", "Timeframe"), ('5min', '15min', '1hour', '1day'), index=3)
     
     st.divider()
     st.markdown(f"**⚙️ {t('ตั้งค่ากราฟ', 'Indicators')}**")
-    
-    show_vol = st.checkbox(t("📊 วอลุ่ม", "Volume"), value=True)
+    show_vol = st.checkbox(t("Volume", "Volume"), value=True)
     show_ema50 = st.checkbox("EMA 50", value=True)
     show_ema200 = st.checkbox("EMA 200", value=True)
     show_bb = st.checkbox("Bollinger Bands", value=False)
@@ -109,7 +111,7 @@ with st.sidebar:
                 if st.button(name, key=f"s_{sym}", use_container_width=True):
                     st.session_state.selected_stock = sym; st.rerun()
 
-#  CHART HELPER
+# --- 5. CHART HELPER ---
 def render_full_chart(chart_obj, data):
     chart_obj.legend(visible=True, font_size=12, font_family='Trebuchet MS')
     chart_obj.set(data)
@@ -131,7 +133,7 @@ def render_full_chart(chart_obj, data):
         macd_l = chart_obj.create_line(name='MACD', color='#FF5252')
         macd_l.set(data[['time', 'macd_line']].rename(columns={'macd_line': 'MACD'}))
 
-#  MAIN CONTENT 
+# --- 6. MAIN CONTENT ---
 if page == t("🔍 วิเคราะห์รายตัว", "Single View"):
     symbol = st.session_state.selected_stock
     df = get_pro_data(symbol, timeframe)
@@ -144,7 +146,7 @@ if page == t("🔍 วิเคราะห์รายตัว", "Single View"
         m3.metric(t("แนวรับ", "Support"), f"{df['sup'].iloc[-1]:,.2f}")
         m4.metric(t("กำไรระบบ", "Strategy Profit"), f"{df['cum_ret'].iloc[-1]*100:.2f}%")
 
-        chart = StreamlitChart(height=900)
+        chart = StreamlitChart(height=750)
         render_full_chart(chart, df)
         chart.load()
 
@@ -168,6 +170,6 @@ else:
             d = get_pro_data(sel, timeframe)
             if not d.empty:
                 st.markdown(f"**{sel}** | {d['close'].iloc[-1]:,.2f}")
-                c = StreamlitChart(height=550) 
+                c = StreamlitChart(height=450) 
                 render_full_chart(c, d)
                 c.load()
