@@ -10,7 +10,7 @@ st.set_page_config(layout="wide", page_title="kwan test", page_icon="📈")
 
 st.markdown("""
     <style>
-        /* เพิ่ม Padding ซ้าย-ขวา เป็น 3rem เพื่อให้กราฟมีพื้นที่หายใจ ไม่ติดขอบจอเกินไป */
+
         .block-container { padding: 1rem 3rem 1rem 3rem !important; max-width: 100% !important; }
         iframe { width: 100% !important; border-radius: 8px !important; }
         [data-testid="stSidebar"] { width: 280px !important; }
@@ -111,7 +111,7 @@ with st.sidebar:
                 if st.button(name, key=f"s_{sym}", use_container_width=True):
                     st.session_state.selected_stock = sym; st.rerun()
 
-# --- 5. CHART HELPER ---
+# CHART HELPER
 def render_full_chart(chart_obj, data):
     chart_obj.legend(visible=True, font_size=12, font_family='Trebuchet MS')
     chart_obj.set(data)
@@ -133,7 +133,7 @@ def render_full_chart(chart_obj, data):
         macd_l = chart_obj.create_line(name='MACD', color='#FF5252')
         macd_l.set(data[['time', 'macd_line']].rename(columns={'macd_line': 'MACD'}))
 
-# --- 6. MAIN CONTENT ---
+# MAIN CONTENT
 if page == t("🔍 วิเคราะห์รายตัว", "Single View"):
     symbol = st.session_state.selected_stock
     df = get_pro_data(symbol, timeframe)
@@ -173,4 +173,5 @@ else:
                 c = StreamlitChart(height=450) 
                 render_full_chart(c, d)
                 c.load()
+
 
