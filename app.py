@@ -7,6 +7,33 @@ from streamlit_autorefresh import st_autorefresh
 # --- 1. CONFIGURATION ---
 st.set_page_config(layout="wide", page_title="Kwan test", page_icon="📈")
 
+st.markdown("""
+    <style>
+        /* ลดช่องว่างด้านบนของเนื้อหาหลัก */
+        .block-container {
+            padding-top: 1rem;
+            padding-bottom: 0rem;
+            margin-top: 0rem;
+        }
+        /* ลดช่องว่างด้านบนของ Sidebar */
+        [data-testid="stSidebarNav"] {
+            padding-top: 0rem;
+        }
+        /* ขยับส่วน Header ขึ้น */
+        .stElementContainer {
+            margin-bottom: 0rem;
+        }
+        /* 🎯 ปรับแต่งปุ่มเฉพาะใน Sidebar */
+        [data-testid="stSidebar"] .stButton > button {
+            height: 1.8rem;          /* ลดความสูงปุ่ม */
+            padding-top: 0px;        /* จัดข้อความให้อยู่ตรงกลาง */
+            padding-bottom: 0px;
+            font-size: 13px;         /* ลดขนาดตัวอักษร */
+            margin-bottom: 1px;     /* ลดระยะห่างระหว่างปุ่ม */
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
 # ✅ 2. SET REAL-TIME REFRESH (ทุกๆ 30 วินาที)
 st_autorefresh(interval=30000, key="fivedatarefresh")
 
@@ -107,14 +134,15 @@ if page in [t("🔍 วิเคราะห์รายตัว", "🔍 Single
     df = get_processed_data(symbol, timeframe)
     
     if not df.empty:
-        col1, col2 = st.columns(2)
+        m_col1, m_col2, m_col3 = st.columns([1, 1, 0.4])
         price_change = df['close'].iloc[-1] - df['close'].iloc[-2]
-        col1.metric(t("ราคาล่าสุด", "Last Price"), f"{df['close'].iloc[-1]:,.2f}", f"{price_change:,.2f}")
-        col2.metric(t("แนวต้าน (R)", "Resistance"), f"{df['resistance'].iloc[-1]:,.2f}")
-        
-        # ปุ่ม Reset
-        if st.button(t("🎯 กลับไปที่ล่าสุด (Reset View)", "🎯 Back to Latest"), use_container_width=True):
-            st.rerun()
+        with m_col1:
+            m_col1.metric(t("ราคาล่าสุด", "Last Price"), f"{df['close'].iloc[-1]:,.2f}", f"{price_change:,.2f}")
+        with m_col2:
+            m_col2.metric(t("แนวต้าน (R)", "Resistance"), f"{df['resistance'].iloc[-1]:,.2f}")
+        with m_col3:
+            if st.button("🎯 Reset", use_container_width=True):
+                st.rerun()
 
         # วาดกราฟ (ย้ายออกมาข้างนอกเพื่อให้แสดงผลตลอดเวลา)
         chart = StreamlitChart(height=600)
