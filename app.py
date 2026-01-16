@@ -5,7 +5,7 @@ import numpy as np
 from lightweight_charts.widgets import StreamlitChart
 from streamlit_autorefresh import st_autorefresh
 
-# --- 1. CONFIGURATION ---
+# CONFIGURATION
 st.set_page_config(layout="wide", page_title="KWAN TEST", page_icon="📈")
 
 st.markdown("""
@@ -21,10 +21,9 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# ปรับ Auto-refresh เป็น 120,000ms = 2 นาที
 st_autorefresh(interval=120000, key="KWAN TEST")
 
-# --- 2. SYSTEM STATE ---
+#  SYSTEM STATE 
 if 'lang' not in st.session_state: st.session_state.lang = 'TH'
 if 'selected_stock' not in st.session_state: st.session_state.selected_stock = "AAPL"
 
@@ -38,8 +37,8 @@ ASSET_GROUPS = {
 }
 ALL_SYMBOLS = [s for sub in ASSET_GROUPS.values() for s in sub]
 
-# --- 3. DATA ENGINE ---
-@st.cache_data(ttl=110) # ปรับ Cache TTL ให้ใกล้เคียงกับ Refresh rate
+#  DATA ENGINE 
+@st.cache_data(ttl=110) 
 def get_pro_data(symbol, timeframe):
     tf_map = {'5min': '5m', '15min': '15m', '1hour': '1h', '1day': '1d'}
     interval = tf_map.get(timeframe, '1d')
@@ -82,7 +81,7 @@ def get_pro_data(symbol, timeframe):
         return df.dropna()
     except: return pd.DataFrame()
 
-# --- 4. SIDEBAR ---
+# SIDEBAR 
 with st.sidebar:
     st.markdown(f"### ⚡ **KWAN TEST**")
     c1, c2 = st.columns(2)
@@ -110,7 +109,7 @@ with st.sidebar:
                 if st.button(name, key=f"s_{sym}", use_container_width=True):
                     st.session_state.selected_stock = sym; st.rerun()
 
-# --- 5. CHART HELPER ---
+#  CHART HELPER
 def render_full_chart(chart_obj, data):
     chart_obj.legend(visible=True, font_size=12, font_family='Trebuchet MS')
     chart_obj.set(data)
@@ -132,7 +131,7 @@ def render_full_chart(chart_obj, data):
         macd_l = chart_obj.create_line(name='MACD', color='#FF5252')
         macd_l.set(data[['time', 'macd_line']].rename(columns={'macd_line': 'MACD'}))
 
-# --- 6. MAIN CONTENT ---
+#  MAIN CONTENT 
 if page == t("🔍 วิเคราะห์รายตัว", "Single View"):
     symbol = st.session_state.selected_stock
     df = get_pro_data(symbol, timeframe)
