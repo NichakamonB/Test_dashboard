@@ -151,7 +151,7 @@ if page == t("🔍 วิเคราะห์รายตัว", "Single View"
         render_full_chart(chart, df)
         chart.load()
 
-        with st.expander(t("🔍 วิเคราะห์จุดเข้า-ออก", "Signal Insight"), expanded=True):
+       with st.expander(t("🔍 วิเคราะห์จุดเข้า-ออก", "Signal Insight"), expanded=True):
             s_col1, s_col2 = st.columns([1, 2])
             with s_col1:
                 last_sig = df['signal'].iloc[-1]
@@ -163,18 +163,17 @@ if page == t("🔍 วิเคราะห์รายตัว", "Single View"
             with s_col2:
                 st.table(df[df['signal'] != 0][['time', 'close', 'signal']].tail(3))
 
+    # --- 7. FOOTER SECTION ---
     st.markdown("---")
     cf1, cf2, cf3 = st.columns([3, 4, 3])
     with cf2:
-    st.markdown(f"""
-        <div style="text-align: center; color: gray; font-size: 14px;">
-            <p>© 2026 <b>KWAN TEST</b> | Intelligent Trading Analysis System</p>
-            <p>📊 Data Source: <a href="https://finance.yahoo.com/quote/{st.session_state.selected_stock}" target="_blank" style="color: #ff4b4b; text-decoration: none;">Verify on Yahoo Finance (Official)</a></p>
-            <p style="font-size: 12px; opacity: 0.6;">Disclaimer: ข้อมูลนี้ใช้เพื่อการทดสอบและวิเคราะห์เชิงเทคนิคเท่านั้น ไม่ใช่คำแนะนำในการลงทุน</p>
-        </div>
-        """, 
-        unsafe_allow_html=True
-    )
+        st.markdown(f"""
+            <div style="text-align: center; color: gray; font-size: 14px;">
+                <p>© 2026 <b>KWAN TEST</b> | Intelligent Trading Analysis System</p>
+                <p>📊 Data Source: <a href="https://finance.yahoo.com/quote/{st.session_state.selected_stock}" target="_blank" style="color: #ff4b4b; text-decoration: none;">Verify on Yahoo Finance (Official)</a></p>
+                <p style="font-size: 12px; opacity: 0.6;">Disclaimer: ข้อมูลนี้ใช้เพื่อการทดสอบเท่านั้น ไม่ใช่คำแนะนำในการลงทุน</p>
+            </div>
+            """, unsafe_allow_html=True)
     
 else:
     st.subheader(t("📊 กระดาน 4 จอ", "4-Screen Grid"))
@@ -188,6 +187,7 @@ else:
                 c = StreamlitChart(height=450) 
                 render_full_chart(c, d)
                 c.load()
+
 
 
 
