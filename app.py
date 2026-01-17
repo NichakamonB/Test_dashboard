@@ -328,7 +328,7 @@ with st.sidebar:
             <h1 style='font-size: 2.5em; margin: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;'>
                 📊 Kwan test
             </h1>
-            <p style='color: #94a3b8; font-size: 0.9em; margin-top: 5px;'>Advanced Technical Analysis</p>
+            <p style='color: #94a3b8; font-size: 0.9em; margin-top: 5px;'>Test Plot graph ,Indicator </p>
         </div>
     """, unsafe_allow_html=True)
     
@@ -652,4 +652,5 @@ st.markdown(f"""
         </p>
     </div>
 """, unsafe_allow_html=True)
+
 
